@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HospitalAI Navigator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-hospital-user"></i>
+                <h2>HospitalAI</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</li>
+                <li data-target="recommendation"><i class="fa-solid fa-star-of-life"></i> AI Recommend</li>
+                <li data-target="doctors"><i class="fa-solid fa-user-doctor"></i> Doctors</li>
+                <li data-target="smart-form"><i class="fa-solid fa-clipboard-list"></i> Smart Form</li>
+                <li data-target="navigate"><i class="fa-solid fa-map-location-dot"></i> Navigate</li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-info">
+                    <h1>AI Healthcare Dashboard</h1>
+                    <p>Real-time simulated hospital data & insights</p>
+                </div>
+                <div class="status-badge">
+                    <span class="pulse-dot"></span> System Online
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="page-section active-section">
+                    <div class="glass-card prediction-form">
+                        <h3><i class="fa-solid fa-magnifying-glass-chart"></i> Predict Patient Load</h3>
+                        <div class="input-group">
+                            <select id="pred-hospital">
+                                <option value="City Hospital">City Hospital</option>
+                                <option value="Metro Hospital">Metro Hospital</option>
+                                <option value="Green Valley Hospital">Green Valley Hospital</option>
+                            </select>
+                            <select id="pred-dept">
+                                <option value="Emergency">Emergency</option>
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Orthopedic">Orthopedic</option>
+                                <option value="Dental">Dental</option>
+                                <option value="X-ray">X-ray</option>
+                            </select>
+                            <input type="number" id="pred-hour" placeholder="Hour (0-23)" min="0" max="23" value="12">
+                            <button id="btn-predict" class="btn-primary">Predict</button>
+                        </div>
+                        <div id="predict-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Recommendation Section -->
+                <section id="recommendation" class="page-section hidden">
+                    <div class="glass-card">
+                        <h3><i class="fa-solid fa-kit-medical"></i> Find Best Hospital</h3>
+                        <div class="input-group">
+                            <select id="rec-dept">
+                                <option value="Emergency">Emergency</option>
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Orthopedic">Orthopedic</option>
+                            </select>
+                            <input type="number" id="rec-hour" placeholder="Hour (0-23)" min="0" max="23" value="12">
+                            <button id="btn-recommend" class="btn-primary">Find Hospital</button>
+                        </div>
+                        <div id="rec-results" class="cards-grid"></div>
+                    </div>
+                </section>
+
+                <!-- Doctors Section -->
+                <section id="doctors" class="page-section hidden">
+                    <div class="glass-card">
+                        <h3><i class="fa-solid fa-stethoscope"></i> Doctor Availability</h3>
+                        <div class="input-group">
+                            <select id="doc-dept">
+                                <option value="Emergency">Emergency</option>
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Orthopedic">Orthopedic</option>
+                            </select>
+                            <button id="btn-doctors" class="btn-primary">Check Availability</button>
+                        </div>
+                        <div id="doc-results" class="cards-grid"></div>
+                    </div>
+                </section>
+
+                <!-- Smart Form Section -->
+                <section id="smart-form" class="page-section hidden">
+                    <div class="glass-card">
+                        <h3><i class="fa-regular fa-file-lines"></i> AI Pre-Consultation Form</h3>
+                        <div class="input-group">
+                            <select id="form-dept">
+                                <option value="Emergency">Emergency</option>
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Orthopedic">Orthopedic</option>
+                            </select>
+                            <button id="btn-generate-form" class="btn-primary">Generate Form</button>
+                        </div>
+                        <div id="form-container" class="hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Navigation Section -->
+                <section id="navigate" class="page-section hidden">
+                    <div class="glass-card">
+                        <h3><i class="fa-solid fa-route"></i> Hospital Navigation</h3>
+                        <div class="input-group">
+                            <select id="nav-hospital">
+                                <option value="City Hospital">City Hospital</option>
+                                <option value="Metro Hospital">Metro Hospital</option>
+                            </select>
+                            <select id="nav-dept">
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Orthopedic">Orthopedic</option>
+                                <option value="X-ray">X-ray</option>
+                            </select>
+                            <button id="btn-navigate" class="btn-primary">Get Route</button>
+                        </div>
+                        <div id="nav-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
