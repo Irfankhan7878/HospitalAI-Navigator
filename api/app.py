@@ -199,6 +199,137 @@ def get_doctors():
         'doctors': doctors
     })
 
+@app.route('/generate_form', methods=['GET'])
+def generate_patient_form():
+    """
+    Smart Patient Form System
+    Generates intelligent questions based on the selected department
+    """
+    department = request.args.get('department')
+    if not department or department not in DEPARTMENTS_INFO:
+        return jsonify({'error': 'Invalid or missing department.'}), 400
+        
+    base_questions = [
+        {"id": "q1", "question": "What is your primary symptom?", "type": "text"},
+        {"id": "q2", "question": "How long have you been experiencing these symptoms?", "type": "text"},
+        {"id": "q3", "question": "Do you smoke or consume alcohol?", "type": "choice", "options": ["Neither", "Smoking", "Alcohol", "Both"]},
+        {"id": "q4", "question": "Are you currently taking any medication?", "type": "boolean"},
+        {"id": "q5", "question": "Do you have any known allergies?", "type": "text"}
+    ]
+    
+    dept_questions = []
+    if department == "Cardiology":
+        dept_questions = [
+            {"id": "c1", "question": "Do you experience chest pain or tightness?", "type": "boolean"},
+            {"id": "c2", "question": "Do you feel shortness of breath?", "type": "boolean"},
+            {"id": "c3", "question": "Does anyone in your family have heart disease?", "type": "boolean"}
+        ]
+    elif department == "Orthopedic":
+        dept_questions = [
+            {"id": "o1", "question": "Is the pain related to a recent injury or fall?", "type": "boolean"},
+            {"id": "o2", "question": "Does the joint feel stiff in the morning?", "type": "boolean"},
+            {"id": "o3", "question": "Is there any swelling or redness around the affected area?", "type": "boolean"}
+        ]
+    elif department == "Dental":
+        dept_questions = [
+            {"id": "d1", "question": "Are your teeth sensitive to hot or cold?", "type": "boolean"},
+            {"id": "d2", "question": "Do your gums bleed when you brush?", "type": "boolean"},
+            {"id": "d3", "question": "When was your last dental checkup?", "type": "text"}
+        ]
+    elif department == "Emergency":
+        dept_questions = [
+            {"id": "e1", "question": "Are you experiencing severe bleeding?", "type": "boolean"},
+            {"id": "e2", "question": "Have you lost consciousness?", "type": "boolean"},
+            {"id": "e3", "question": "Is your pain level above 8 on a scale of 1-10?", "type": "boolean"}
+        ]
+    elif department == "X-ray":
+        dept_questions = [
+            {"id": "x1", "question": "Are you pregnant or is there a possibility of pregnancy?", "type": "boolean"},
+            {"id": "x2", "question": "Do you have any metal implants or pacemakers?", "type": "boolean"},
+            {"id": "x3", "question": "Who referred you for this X-ray?", "type": "text"}
+        ]
+        
+    return jsonify({
+        "department": department,
+        "form_schema": {
+            "title": f"{department} Pre-Consultation Form",
+            "questions": base_questions + dept_questions
+        }
+    })
+
+@app.route('/submit_form', methods=['POST'])
+def submit_patient_form():
+    """
+    Stores patient form responses in structured JSON
+    """
+    data = request.json
+    if not data or 'department' not in data or 'responses' not in data:
+        return jsonify({'error': 'Invalid payload.'}), 400
+        
+    # Here we would normally save to a database.
+    # For now, we simulate saving and return a success response.
+    return jsonify({
+        "status": "success",
+        "message": "Form submitted successfully. Doctors can now review your condition.",
+        "saved_data": {
+            "department": data['department'],
+            "responses": data['responses']
+        }
+    })
+
+@app.route('/navigate', methods=['POST'])
+def navigate():
+    """
+    Hospital Navigation System
+    Provides the exact location and a step-by-step route to the target department
+    """
+    data = request.json
+    hospital = data.get('hospital')
+    department = data.get('department')
+    current_location = data.get('current_location', 'Entrance')
+    
+    if not hospital or hospital not in HOSPITALS_INFO:
+        return jsonify({'error': 'Invalid or missing hospital.'}), 400
+    if not department or department not in DEPARTMENTS_INFO:
+        return jsonify({'error': 'Invalid or missing department.'}), 400
+        
+    dept_info = DEPARTMENTS_INFO[department]
+    target_floor = dept_info['floor']
+    # Generating a random static room number based on floor
+    # Floor 0 -> 10-99, Floor 1 -> 110-199, etc.
+    room_number = f"{target_floor}{random.randint(10, 99)}" if target_floor > 0 else f"{random.randint(10, 99)}"
+    
+    # Simple Route Logic
+    steps = []
+    if current_location.lower() == 'entrance':
+        steps.append("Start at the Main Entrance.")
+        steps.append("Proceed to the Central Reception area.")
+        
+        if target_floor == 0:
+            steps.append(f"Follow the hallway on the Ground Floor straight to the {department} Department.")
+        else:
+            steps.append(f"Take Elevator A or the Main Stairs to Floor {target_floor}.")
+            steps.append(f"Exit the elevator and follow the signs to {department}.")
+    else:
+        steps.append(f"Starting from your current location: {current_location}.")
+        steps.append(f"Please find the nearest elevator or staircase.")
+        if target_floor == 0:
+            steps.append("Go down to the Ground Floor.")
+        else:
+            steps.append(f"Go to Floor {target_floor}.")
+            
+    steps.append(f"Your destination is Room {room_number}.")
+    
+    return jsonify({
+        "hospital": hospital,
+        "department": department,
+        "location": {
+            "floor": target_floor,
+            "room": room_number
+        },
+        "route_steps": steps
+    })
+
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({"status": "running"}), 200
